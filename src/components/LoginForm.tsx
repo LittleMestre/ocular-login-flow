@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import SignUpModal from './SignUpModal';
+import InvestmentArrow from './InvestmentArrow';
+import ErrorMessage from './ErrorMessage';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +16,17 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [errors, setErrors] = useState<{email?: string, password?: string, general?: string}>({});
+  const [showForm, setShowForm] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showArrowAnimation, setShowArrowAnimation] = useState(true);
+
+  // Mostrar formulário após animação inicial da seta
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowForm(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,22 +37,15 @@ const LoginForm = () => {
     const newErrors: {email?: string, password?: string} = {};
     
     if (!email || !password) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha os campos obrigatórios para poder entrar em sua conta.",
-        variant: "destructive",
+      setErrors({
+        general: "Por favor, preencha os campos obrigatórios para poder entrar em sua conta."
       });
       return false;
     }
     
     if (!validateEmail(email) || password.length < 6) {
       setErrors({
-        general: "CAMPO INVALIDO Por favor, verifique o email e senha inseridos."
-      });
-      toast({
-        title: "CAMPO INVALIDO",
-        description: "Por favor, verifique o email e senha inseridos.",
-        variant: "destructive",
+        general: "Por favor, verifique o email e senha inseridos."
       });
       return false;
     }
@@ -58,10 +64,17 @@ const LoginForm = () => {
     // Simular chamada de API
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Login realizado com sucesso!",
-        description: "Bem-vindo ao Investor Report",
-      });
+      setIsSuccess(true);
+      
+      // Animação de saída do formulário para a esquerda
+      setTimeout(() => {
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Redirecionando para o painel...",
+        });
+        // Aqui você pode redirecionar para outra página
+        // window.location.href = '/dashboard';
+      }, 2000);
     }, 2000);
   };
 
@@ -69,10 +82,28 @@ const LoginForm = () => {
     setShowPassword(!showPassword);
   };
 
+  const hasErrors = Object.keys(errors).length > 0;
+
   return (
     <>
-      <div className="min-h-screen bg-gradient-blue flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-white/10 backdrop-blur-md border-white/20 shadow-2xl animate-fade-in">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Padrão de fundo com efeito de mercado */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-1/4 left-1/4 w-1 h-32 bg-blue-400 transform rotate-12 animate-pulse" />
+          <div className="absolute top-1/2 right-1/4 w-1 h-24 bg-green-400 transform -rotate-12 animate-pulse delay-300" />
+          <div className="absolute bottom-1/4 left-1/3 w-1 h-28 bg-blue-300 transform rotate-45 animate-pulse delay-700" />
+        </div>
+
+        {/* Animação da seta de investimento */}
+        <InvestmentArrow isError={hasErrors} isSuccess={isSuccess} />
+
+        {/* Mensagem de erro centralizada no topo */}
+        <ErrorMessage message={errors.general || ''} isVisible={hasErrors} />
+
+        {/* Formulário de login com animação de entrada/saída */}
+        <Card className={`w-full max-w-md bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-1000 ${
+          showForm ? (isSuccess ? 'animate-slide-out-left opacity-0' : 'animate-fade-in opacity-100') : 'opacity-0 scale-95'
+        }`}>
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl font-semibold text-white">
               Bem-vindo ao Investor Report
@@ -88,7 +119,9 @@ const LoginForm = () => {
                     placeholder="E-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:border-white/40"
+                    className={`pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/70 focus:border-blue-400 transition-colors ${
+                      hasErrors ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
                   />
                 </div>
               </div>
@@ -101,7 +134,9 @@ const LoginForm = () => {
                     placeholder="Senha"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:border-white/40"
+                    className={`pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/70 focus:border-blue-400 transition-colors ${
+                      hasErrors ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
                   />
                   <button
                     type="button"
@@ -121,16 +156,10 @@ const LoginForm = () => {
                 </div>
               </div>
 
-              {errors.general && (
-                <div className="text-red-300 text-sm text-center bg-red-500/20 p-2 rounded">
-                  {errors.general}
-                </div>
-              )}
-
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white text-blue-800 hover:bg-white/90 font-medium py-3 rounded-lg transition-all duration-200"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {isLoading ? (
                   <>
@@ -147,7 +176,7 @@ const LoginForm = () => {
               <span className="text-white/80 text-sm">Não tem uma conta? </span>
               <button 
                 onClick={() => setShowSignUpModal(true)}
-                className="text-white font-medium hover:underline text-sm"
+                className="text-blue-300 font-medium hover:text-blue-200 hover:underline text-sm transition-colors"
               >
                 Cadastre-se
               </button>
