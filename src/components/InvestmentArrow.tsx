@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { ArrowUp } from 'lucide-react';
 
 interface InvestmentArrowProps {
   isError: boolean;
@@ -8,87 +7,107 @@ interface InvestmentArrowProps {
 }
 
 const InvestmentArrow = ({ isError, isSuccess }: InvestmentArrowProps) => {
-  // Criar múltiplas setas espalhadas pela largura da tela
-  const arrowPositions = [
-    { left: '5%', delay: 0 },
-    { left: '15%', delay: -1 },
-    { left: '25%', delay: -2 },
-    { left: '35%', delay: -0.5 },
-    { left: '45%', delay: -1.5 },
-    { left: '55%', delay: -3 },
-    { left: '65%', delay: -2.5 },
-    { left: '75%', delay: -0.8 },
-    { left: '85%', delay: -1.8 },
-    { left: '95%', delay: -2.8 },
-  ];
-
   return (
-    <div className={`fixed inset-0 pointer-events-none z-0 ${
+    <div className={`fixed inset-0 pointer-events-none z-0 overflow-hidden ${
       isSuccess ? 'z-50' : ''
     }`}>
-      {/* Múltiplas setas espalhadas por toda a largura */}
-      {arrowPositions.map((position, index) => (
-        <div
-          key={index}
-          className="absolute bottom-0 h-full"
-          style={{ left: position.left }}
-        >
-          {/* Container da animação da seta */}
-          <div className="relative h-full">
-            {/* Trilha/caminho da seta - múltiplas posições com opacidade decrescente */}
-            <div className="absolute">
-              {/* Posições da trilha - do mais fraco ao mais forte */}
-              <div className={`absolute animate-[moveUpDown_4s_ease-in-out_infinite] ${
-                isError ? 'text-red-500/5' : 'text-blue-400/5'
-              }`} style={{ animationDelay: `${position.delay - 3}s` }}>
-                <ArrowUp className="w-6 h-6" strokeWidth={1} />
-              </div>
-              <div className={`absolute animate-[moveUpDown_4s_ease-in-out_infinite] ${
-                isError ? 'text-red-500/10' : 'text-blue-400/10'
-              }`} style={{ animationDelay: `${position.delay - 2.5}s` }}>
-                <ArrowUp className="w-6 h-6" strokeWidth={1} />
-              </div>
-              <div className={`absolute animate-[moveUpDown_4s_ease-in-out_infinite] ${
-                isError ? 'text-red-500/15' : 'text-blue-400/15'
-              }`} style={{ animationDelay: `${position.delay - 2}s` }}>
-                <ArrowUp className="w-6 h-6" strokeWidth={1} />
-              </div>
-              <div className={`absolute animate-[moveUpDown_4s_ease-in-out_infinite] ${
-                isError ? 'text-red-500/25' : 'text-blue-400/25'
-              }`} style={{ animationDelay: `${position.delay - 1.5}s` }}>
-                <ArrowUp className="w-6 h-6" strokeWidth={1} />
-              </div>
-              <div className={`absolute animate-[moveUpDown_4s_ease-in-out_infinite] ${
-                isError ? 'text-red-500/35' : 'text-blue-400/35'
-              }`} style={{ animationDelay: `${position.delay - 1}s` }}>
-                <ArrowUp className="w-6 h-6" strokeWidth={2} />
-              </div>
-              <div className={`absolute animate-[moveUpDown_4s_ease-in-out_infinite] ${
-                isError ? 'text-red-500/50' : 'text-blue-400/50'
-              }`} style={{ animationDelay: `${position.delay - 0.5}s` }}>
-                <ArrowUp className="w-6 h-6" strokeWidth={2} />
-              </div>
-            </div>
+      {/* Grid de fundo */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="w-full h-full" style={{
+          backgroundImage: `
+            linear-gradient(rgba(96, 165, 250, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(96, 165, 250, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
 
-            {/* Seta principal - mais vibrante e chamativa */}
-            <div className={`relative animate-[moveUpDown_4s_ease-in-out_infinite] ${
-              isSuccess ? 'animate-pulse scale-150' : ''
-            }`} style={{ animationDelay: `${position.delay}s` }}>
-              <div className="animate-[changeDirection_4s_ease-in-out_infinite]" style={{ animationDelay: `${position.delay}s` }}>
-                <ArrowUp 
-                  className={`w-8 h-8 transition-colors duration-300 ${
-                    isError ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 
-                    isSuccess ? 'text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.9)]' : 
-                    'text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]'
-                  }`}
-                  strokeWidth={3}
-                />
-              </div>
-            </div>
+      {/* Barras verticais animadas */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 20 }).map((_, index) => (
+          <div
+            key={`bar-${index}`}
+            className="absolute bottom-0 opacity-60"
+            style={{
+              left: `${5 + index * 4.5}%`,
+              width: '20px',
+              height: `${Math.random() * 60 + 20}%`,
+              background: `linear-gradient(to top, ${
+                isError ? 'rgba(239, 68, 68, 0.3)' : 
+                isSuccess ? 'rgba(74, 222, 128, 0.3)' : 'rgba(96, 165, 250, 0.3)'
+              }, transparent)`,
+              animation: `barPulse ${2 + Math.random() * 3}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Linhas de gráfico animadas */}
+      <div className="absolute inset-0">
+        {/* Linha principal */}
+        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path
+            d="M0,80 Q10,60 20,70 T40,50 T60,45 T80,55 T100,40"
+            fill="none"
+            stroke={isError ? '#ef4444' : isSuccess ? '#4ade80' : '#60a5fa'}
+            strokeWidth="0.5"
+            opacity="0.8"
+            className="animate-pulse"
+          />
+          <path
+            d="M0,75 Q15,55 25,65 T45,45 T65,40 T85,50 T100,35"
+            fill="none"
+            stroke={isError ? '#f87171' : isSuccess ? '#86efac' : '#93c5fd'}
+            strokeWidth="0.3"
+            opacity="0.6"
+            className="animate-pulse"
+            style={{ animationDelay: '0.5s' }}
+          />
+        </svg>
+      </div>
+
+      {/* Números flutuantes */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div
+            key={`number-${index}`}
+            className={`absolute text-xs font-mono opacity-40 ${
+              isError ? 'text-red-400' : 
+              isSuccess ? 'text-green-400' : 'text-blue-400'
+            }`}
+            style={{
+              left: `${10 + index * 12}%`,
+              top: `${20 + Math.random() * 40}%`,
+              animation: `float ${3 + Math.random() * 2}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          >
+            {(Math.random() * 100 + 100).toFixed(2)}
           </div>
-        </div>
-      ))}
-      
+        ))}
+      </div>
+
+      {/* Pontos de dados animados */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 15 }).map((_, index) => (
+          <div
+            key={`dot-${index}`}
+            className={`absolute w-1 h-1 rounded-full ${
+              isError ? 'bg-red-400' : 
+              isSuccess ? 'bg-green-400' : 'bg-blue-400'
+            }`}
+            style={{
+              left: `${Math.random() * 90 + 5}%`,
+              top: `${Math.random() * 60 + 20}%`,
+              animation: `pulse ${1 + Math.random() * 2}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 3}s`,
+              opacity: 0.6
+            }}
+          />
+        ))}
+      </div>
+
       {/* Animação de expansão quando login é bem-sucedido */}
       {isSuccess && (
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-green-400 opacity-20 animate-ping" />

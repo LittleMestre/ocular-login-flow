@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -140,38 +141,32 @@ export default {
 					'0%': { transform: 'rotate(0deg)' },
 					'100%': { transform: 'rotate(360deg)' }
 				},
-				'moveUpDown': {
+				'barPulse': {
 					'0%': {
-						transform: 'translateY(0px)'
-					},
-					'25%': {
-						transform: 'translateY(-40px)'
+						transform: 'scaleY(1)',
+						opacity: '0.6'
 					},
 					'50%': {
-						transform: 'translateY(-80px)'
-					},
-					'75%': {
-						transform: 'translateY(-40px)'
+						transform: 'scaleY(1.5)',
+						opacity: '0.8'
 					},
 					'100%': {
-						transform: 'translateY(0px)'
+						transform: 'scaleY(1)',
+						opacity: '0.6'
 					}
 				},
-				'changeDirection': {
+				'float': {
 					'0%': {
-						transform: 'rotate(0deg)'
-					},
-					'25%': {
-						transform: 'rotate(-15deg)'
+						transform: 'translateY(0px)',
+						opacity: '0.4'
 					},
 					'50%': {
-						transform: 'rotate(0deg)'
-					},
-					'75%': {
-						transform: 'rotate(15deg)'
+						transform: 'translateY(-10px)',
+						opacity: '0.7'
 					},
 					'100%': {
-						transform: 'rotate(0deg)'
+						transform: 'translateY(0px)',
+						opacity: '0.4'
 					}
 				}
 			},
