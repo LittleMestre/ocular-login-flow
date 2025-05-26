@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import SignUpModal from './SignUpModal';
 import InvestmentArrow from './InvestmentArrow';
-import ErrorMessage from './ErrorMessage';
+import ErrorCard from './ErrorCard';
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +20,8 @@ const LoginForm = () => {
   const [errors, setErrors] = useState<{email?: string, password?: string, general?: string}>({});
   const [showForm, setShowForm] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showArrowAnimation, setShowArrowAnimation] = useState(true);
+  const [showErrorCard, setShowErrorCard] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Mostrar formulário após animação inicial da seta
   useEffect(() => {
@@ -34,24 +37,26 @@ const LoginForm = () => {
   };
 
   const validateForm = () => {
-    const newErrors: {email?: string, password?: string} = {};
-    
     if (!email || !password) {
-      setErrors({
-        general: "Por favor, preencha os campos obrigatórios para poder entrar em sua conta."
-      });
+      setErrorMessage("Por favor, preencha os campos obrigatórios para poder entrar em sua conta.");
+      setShowErrorCard(true);
       return false;
     }
     
     if (!validateEmail(email) || password.length < 6) {
-      setErrors({
-        general: "Por favor, verifique o email e senha inseridos."
-      });
+      setErrorMessage("Por favor, verifique o email e senha inseridos.");
+      setShowErrorCard(true);
       return false;
     }
     
     setErrors({});
     return true;
+  };
+
+  const handleRetry = () => {
+    setShowErrorCard(false);
+    setErrorMessage('');
+    setErrors({});
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,8 +77,7 @@ const LoginForm = () => {
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o painel...",
         });
-        // Aqui você pode redirecionar para outra página
-        // window.location.href = '/dashboard';
+        navigate('/success');
       }, 2000);
     }, 2000);
   };
@@ -82,7 +86,7 @@ const LoginForm = () => {
     setShowPassword(!showPassword);
   };
 
-  const hasErrors = Object.keys(errors).length > 0;
+  const hasErrors = Object.keys(errors).length > 0 || showErrorCard;
 
   return (
     <>
@@ -95,10 +99,7 @@ const LoginForm = () => {
         </div>
 
         {/* Animação da seta de investimento */}
-        <InvestmentArrow isError={hasErrors} isSuccess={isSuccess} />
-
-        {/* Mensagem de erro centralizada no topo */}
-        <ErrorMessage message={errors.general || ''} isVisible={hasErrors} />
+        <InvestmentArrow isError={hasErrors && !showErrorCard} isSuccess={isSuccess} />
 
         {/* Formulário de login com animação de entrada/saída */}
         <Card className={`w-full max-w-md bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-1000 ${
@@ -119,9 +120,7 @@ const LoginForm = () => {
                     placeholder="E-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={`pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/70 focus:border-blue-400 transition-colors ${
-                      hasErrors ? 'border-red-500 focus:border-red-500' : ''
-                    }`}
+                    className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/70 focus:border-blue-400 transition-colors"
                   />
                 </div>
               </div>
@@ -134,9 +133,7 @@ const LoginForm = () => {
                     placeholder="Senha"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/70 focus:border-blue-400 transition-colors ${
-                      hasErrors ? 'border-red-500 focus:border-red-500' : ''
-                    }`}
+                    className="pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/70 focus:border-blue-400 transition-colors"
                   />
                   <button
                     type="button"
@@ -184,6 +181,12 @@ const LoginForm = () => {
           </CardContent>
         </Card>
       </div>
+
+      <ErrorCard 
+        message={errorMessage}
+        isVisible={showErrorCard}
+        onRetry={handleRetry}
+      />
 
       <SignUpModal 
         isOpen={showSignUpModal} 
