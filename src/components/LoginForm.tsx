@@ -86,6 +86,7 @@ const LoginForm = () => {
     setShowPassword(!showPassword);
   };
 
+  // Estado de erro deve incluir tanto o ErrorCard quanto outros erros
   const hasErrors = Object.keys(errors).length > 0 || showErrorCard;
 
   return (
@@ -98,8 +99,8 @@ const LoginForm = () => {
           <div className="absolute bottom-1/4 left-1/3 w-1 h-28 bg-blue-300 transform rotate-45 animate-pulse delay-700" />
         </div>
 
-        {/* Animação da seta de investimento */}
-        <InvestmentArrow isError={hasErrors && !showErrorCard} isSuccess={isSuccess} />
+        {/* Animação da seta de investimento com estado de erro correto */}
+        <InvestmentArrow isError={hasErrors} isSuccess={isSuccess} />
 
         {/* Formulário de login com animação de entrada/saída */}
         <Card className={`w-full max-w-md bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-1000 ${
