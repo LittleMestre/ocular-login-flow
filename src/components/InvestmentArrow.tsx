@@ -22,7 +22,69 @@ const InvestmentArrow = ({ isError, isSuccess }: InvestmentArrowProps) => {
         }} />
       </div>
 
-      {/* Barras verticais animadas */}
+      {/* Ondas de gráfico animadas - sempre em movimento */}
+      <div className="absolute inset-0">
+        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {/* Onda principal */}
+          <path
+            d="M0,80 Q10,60 20,70 T40,50 T60,45 T80,55 T100,40"
+            fill="none"
+            stroke={isError ? '#ef4444' : isSuccess ? '#4ade80' : '#60a5fa'}
+            strokeWidth="0.5"
+            opacity="0.8"
+          >
+            <animate
+              attributeName="d"
+              values="M0,80 Q10,60 20,70 T40,50 T60,45 T80,55 T100,40;
+                      M0,75 Q15,55 25,65 T45,45 T65,40 T85,50 T100,35;
+                      M0,85 Q12,65 22,75 T42,55 T62,50 T82,60 T100,45;
+                      M0,80 Q10,60 20,70 T40,50 T60,45 T80,55 T100,40"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+          </path>
+          
+          {/* Onda secundária */}
+          <path
+            d="M0,75 Q15,55 25,65 T45,45 T65,40 T85,50 T100,35"
+            fill="none"
+            stroke={isError ? '#f87171' : isSuccess ? '#86efac' : '#93c5fd'}
+            strokeWidth="0.3"
+            opacity="0.6"
+          >
+            <animate
+              attributeName="d"
+              values="M0,75 Q15,55 25,65 T45,45 T65,40 T85,50 T100,35;
+                      M0,70 Q18,50 28,60 T48,40 T68,35 T88,45 T100,30;
+                      M0,80 Q13,60 23,70 T43,50 T63,45 T83,55 T100,40;
+                      M0,75 Q15,55 25,65 T45,45 T65,40 T85,50 T100,35"
+              dur="5s"
+              repeatCount="indefinite"
+            />
+          </path>
+          
+          {/* Onda terciária */}
+          <path
+            d="M0,70 Q20,50 30,60 T50,40 T70,35 T90,45 T100,30"
+            fill="none"
+            stroke={isError ? '#fca5a5' : isSuccess ? '#bbf7d0' : '#bfdbfe'}
+            strokeWidth="0.2"
+            opacity="0.4"
+          >
+            <animate
+              attributeName="d"
+              values="M0,70 Q20,50 30,60 T50,40 T70,35 T90,45 T100,30;
+                      M0,65 Q22,45 32,55 T52,35 T72,30 T92,40 T100,25;
+                      M0,75 Q17,55 27,65 T47,45 T67,40 T87,50 T100,35;
+                      M0,70 Q20,50 30,60 T50,40 T70,35 T90,45 T100,30"
+              dur="6s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </svg>
+      </div>
+
+      {/* Barras verticais animadas - sempre em movimento */}
       <div className="absolute inset-0">
         {Array.from({ length: 20 }).map((_, index) => (
           <div
@@ -43,33 +105,9 @@ const InvestmentArrow = ({ isError, isSuccess }: InvestmentArrowProps) => {
         ))}
       </div>
 
-      {/* Linhas de gráfico animadas */}
+      {/* Números flutuantes - sempre em movimento */}
       <div className="absolute inset-0">
-        {/* Linha principal */}
-        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path
-            d="M0,80 Q10,60 20,70 T40,50 T60,45 T80,55 T100,40"
-            fill="none"
-            stroke={isError ? '#ef4444' : isSuccess ? '#4ade80' : '#60a5fa'}
-            strokeWidth="0.5"
-            opacity="0.8"
-            className="animate-pulse"
-          />
-          <path
-            d="M0,75 Q15,55 25,65 T45,45 T65,40 T85,50 T100,35"
-            fill="none"
-            stroke={isError ? '#f87171' : isSuccess ? '#86efac' : '#93c5fd'}
-            strokeWidth="0.3"
-            opacity="0.6"
-            className="animate-pulse"
-            style={{ animationDelay: '0.5s' }}
-          />
-        </svg>
-      </div>
-
-      {/* Números flutuantes */}
-      <div className="absolute inset-0">
-        {Array.from({ length: 8 }).map((_, index) => (
+        {Array.from({ length: 12 }).map((_, index) => (
           <div
             key={`number-${index}`}
             className={`absolute text-xs font-mono opacity-40 ${
@@ -77,20 +115,23 @@ const InvestmentArrow = ({ isError, isSuccess }: InvestmentArrowProps) => {
               isSuccess ? 'text-green-400' : 'text-blue-400'
             }`}
             style={{
-              left: `${10 + index * 12}%`,
+              left: `${10 + index * 8}%`,
               top: `${20 + Math.random() * 40}%`,
               animation: `float ${3 + Math.random() * 2}s ease-in-out infinite`,
               animationDelay: `${Math.random() * 2}s`
             }}
           >
-            {(Math.random() * 100 + 100).toFixed(2)}
+            {isError ? 
+              `-${(Math.random() * 50 + 10).toFixed(2)}` : 
+              `+${(Math.random() * 100 + 50).toFixed(2)}`
+            }
           </div>
         ))}
       </div>
 
-      {/* Pontos de dados animados */}
+      {/* Pontos de dados animados - sempre em movimento */}
       <div className="absolute inset-0">
-        {Array.from({ length: 15 }).map((_, index) => (
+        {Array.from({ length: 25 }).map((_, index) => (
           <div
             key={`dot-${index}`}
             className={`absolute w-1 h-1 rounded-full ${
@@ -106,6 +147,50 @@ const InvestmentArrow = ({ isError, isSuccess }: InvestmentArrowProps) => {
             }}
           />
         ))}
+      </div>
+
+      {/* Linhas de tendência animadas */}
+      <div className="absolute inset-0">
+        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line
+            x1="0" y1="60" x2="100" y2="50"
+            stroke={isError ? '#ef4444' : isSuccess ? '#4ade80' : '#60a5fa'}
+            strokeWidth="0.1"
+            opacity="0.3"
+          >
+            <animate
+              attributeName="y1"
+              values="60;65;55;60"
+              dur="7s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="y2"
+              values="50;45;55;50"
+              dur="7s"
+              repeatCount="indefinite"
+            />
+          </line>
+          <line
+            x1="0" y1="70" x2="100" y2="65"
+            stroke={isError ? '#f87171' : isSuccess ? '#86efac' : '#93c5fd'}
+            strokeWidth="0.1"
+            opacity="0.2"
+          >
+            <animate
+              attributeName="y1"
+              values="70;75;65;70"
+              dur="8s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="y2"
+              values="65;60;70;65"
+              dur="8s"
+              repeatCount="indefinite"
+            />
+          </line>
+        </svg>
       </div>
 
       {/* Animação de expansão quando login é bem-sucedido */}
